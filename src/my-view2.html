@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<link rel="import" href="../bower_components/iron-icons/iron-icons.html"> 
 
 	<dom-module id="my-view2">
-  <template>
+  <template items= {{URL}}>
     <style include="shared-styles">
       :host {
          display: block;
@@ -96,8 +96,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="circle">2</div>
       <h1>Current Archive</h1>
     
-	  <iron-ajax url="{{URIroot}}/returnfilesTable.php?argument1=infinity" last-response="{{data}}" auto></iron-ajax>
-	<iron-ajax url="http://10.96.126.119:8080/returnfilesTable.php?argument1=infinity" last-response="{{data}}" auto></iron-ajax>
+	  <iron-ajax id="dater" url="" last-response="{{data}}" auto></iron-ajax>
+	
+	<!--<iron-ajax url="http://10.96.126.119:8080/returnfilesTable.php?argument1=infinity" last-response="{{data}}" auto></iron-ajax>-->
   <iron-data-table id="grid1" items="[[data]]" selection-enabled>
     <data-table-column name="Vendor" filter-by="vendor" sort-by="vendor" width="100px">
       <template>[[item.vendor]]</template>
@@ -130,8 +131,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'my-view2',
 	  ready: function() {
-		baseURI
-		this.URIroot = 'http://10.96.126.119:8080'
+		if (this.baseURI==="http://127.0.0.1:8000/") 
+		{
+		this.$.dater.url = "http://10.96.126.119:8080/returnfilesTable.php?argument1=infinity";
+		}else{
+		this.$.dater.url = "https://postgres-wsos.run.aws-usw02-pr.ice.predix.io/returnfilesTable.php?argument1=infinity";
+		}
+		this.$.dater.generateRequest();
 	  },
 	  _fangMalan: function(e){
 	  
