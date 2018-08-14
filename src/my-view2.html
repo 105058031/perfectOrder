@@ -1,0 +1,151 @@
+
+C:\Pred\PerfOrder\src\my-view2.html
+
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+	<link rel="import" href="../bower_components/polymer/polymer.html">
+	<link rel="import" href="shared-styles.html">
+	<script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+	<link rel="import" href="../bower_components/promise-polyfill/promise-polyfill-lite.html">
+	<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">  
+	<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">  
+	<link rel="import" href="../bower_components/paper-button/paper-button.html"> 
+	<link rel="import" href="../bower_components/iron-icons/iron-icons.html"> 
+
+	<dom-module id="my-view2">
+  <template>
+    <style include="shared-styles">
+      :host {
+         display: block;
+
+        padding: 10px;
+      },
+	  .card {
+		height: auto !important;   
+		width: 100%;
+      }
+    </style>
+  <style is="custom-style">
+    #grid1 data-table-row:not([header]) data-table-cell {
+      height: 70px;
+    }
+
+    #grid1 {
+      --default-primary-color: red;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      --iron-data-table-row-header: {
+        font-size: 1.2em;
+        font-weight: bold;
+		
+      }
+      --iron-data-table-row: {
+        height: 60px;
+        align-items: center;
+      }
+      --iron-data-table-row-odd: {
+        background-color: #fff;
+      }
+      --iron-data-table-row-even: {
+        background-color: #fff;
+      }
+      --iron-data-table-row-hover: {
+        background-color: #eee !important;
+      }
+      --iron-data-table-row-selected: {
+        background-color: #b8d8ff !important;
+        color: #FFF;
+      }
+      --iron-data-table-row-after: {
+        background-color: #fff;
+        bottom: 16px;
+        content: "";
+        height: 2px;
+        left: 13px;
+        pointer-events: none;
+        position: absolute;
+        right: 0px;
+        transition: all 1s ease-in-out;
+        -webkit-transform: scaleX(0.0);
+        transform: scaleX(0.0);
+        z-index: 1;
+		}
+    }
+
+	paper-button.indigo {
+    background-color: #4285f4;
+    color: white;
+	margin-bottom: 10px;
+	width: 25px;
+	height: 2.2em;
+	min-width: 2.5em;
+	transition: 1.6s;
+	}
+	paper-button.indigo:hover {
+    background-color: var(--paper-indigo-900);
+  }
+  </style>
+    <div class="card" id="tabber">
+      <div class="circle">2</div>
+      <h1>Current Archive</h1>
+    
+	  <iron-ajax url="{{URIroot}}/returnfilesTable.php?argument1=infinity" last-response="{{data}}" auto></iron-ajax>
+	<iron-ajax url="http://10.96.126.119:8080/returnfilesTable.php?argument1=infinity" last-response="{{data}}" auto></iron-ajax>
+  <iron-data-table id="grid1" items="[[data]]" selection-enabled>
+    <data-table-column name="Vendor" filter-by="vendor" sort-by="vendor" width="100px">
+      <template>[[item.vendor]]</template>
+    </data-table-column>
+    <data-table-column name="Code" filter-by="code" sort-by="code" width="25px">
+      <template>[[item.code]]</template>
+    </data-table-column>
+	<data-table-column name="Po" filter-by="po" sort-by="po" width="25px">
+      <template>[[item.po]]</template>
+    </data-table-column>
+	<data-table-column name="Line"  filter-by="poline"  sort-by="poline" width="12px">
+      <template>[[item.poline]]</template>
+    </data-table-column>
+	<data-table-column name="" width="4px">
+      <template><paper-button raised class="indigo" on-click="_fangMalan"><iron-icon icon="file-download"></iron-icon></paper-button></template>
+    </data-table-column>
+	<data-table-column name="File Name" filter-by="name"   sort-by="name"  width="250px">
+      <template>[[item.name]]</template>
+    </data-table-column>
+		<data-table-column name="File Name" filter-by="name"   sort-by="name" hidden="true">
+      <template>[[item.image]]</template>
+    </data-table-column>
+	
+  </iron-data-table>
+      
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view2',
+	  ready: function() {
+		baseURI
+		this.URIroot = 'http://10.96.126.119:8080'
+	  },
+	  _fangMalan: function(e){
+	  
+	  
+	  console.log("Vendor: "+ e.currentTarget.parentElement.parentElement.item.vendor);
+	  console.log("Code: "+ e.currentTarget.parentElement.parentElement.item.code);
+	  console.log("Image: "+ e.currentTarget.parentElement.parentElement.item.image.toString());
+	  console.log("PO: "+ e.currentTarget.parentElement.parentElement.item.po);
+	  console.log("PO Line: "+ e.currentTarget.parentElement.parentElement.item.poline);
+	  console.log("Name: "+ e.currentTarget.parentElement.parentElement.item.name);
+	  //this.$["dnwLoad"].url = "http://10.96.126.119:8080/fileDownload.php?argument1=" + e.currentTarget.parentElement.parentElement.item.image + "&argument2=" + e.currentTarget.parentElement.parentElement.item.name;
+	  //this.$["dnwLoad"].generateRequest();
+	  window.open("http://10.96.126.119:8080/fileDownload.php?argument1=" + e.currentTarget.parentElement.parentElement.item.image + "&argument2=" + e.currentTarget.parentElement.parentElement.item.name);
+	  }
+    });
+  </script>
+</dom-module>

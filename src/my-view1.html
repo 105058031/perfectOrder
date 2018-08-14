@@ -1,0 +1,191 @@
+C:\Pred\PerfOrder\src\my-view1.html
+
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+	<script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+	<link rel="import" href="../bower_components/promise-polyfill/promise-polyfill-lite.html">
+	<link rel="import" href="../bower_components/d2l-file-uploader/d2l-file-uploader.html">
+	<link rel="import" href="../bower_components/paper-autocomplete/paper-autocomplete.html">
+	  <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">  
+
+<dom-module id="my-view1">
+  <template>
+  <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+	
+	
+	
+    <div class="card" id="dispa">
+
+
+      <div class="circle">1</div>
+	  <iron-ajax id="upload" 
+	  method="POST" 
+	  url="http://10.96.126.119:8080/trial_vaadin4.php?argument1=C:\Temp\" 
+	  handle-as="text/html"
+	  on-response="Outcome"
+	  on-request="Parse"></iron-ajax>
+      <h1>Form Data</h1>
+	      <iron-form>
+      <form is="iron-form" method="post" id="Skolda" action="http://10.96.126.119:8080/trial_form.php?argument1=C:\Temp\" presubmit="Foo()">
+        <p>Vendor information </p>
+		<div style="display: inline-block;">
+		<div class="autocomplete-wrapper">
+		<input id="vnam" type="text" name="name" placeholder="VendorName">
+		<paper-autocomplete-suggestions for="vnam" id="VNID" source=[[vendornamelist]]></paper-autocomplete-suggestions>
+		</div>
+		<div class="autocomplete-wrapper">
+		<input id="vnum" type="text" name="number" placeholder="VendorNumber" >
+		<paper-autocomplete-suggestions for="vnum" id="VNSD" source={{vendorcodelist}}></paper-autocomplete-suggestions>
+		</div>
+		</div>
+        <p>Purchase Order information </p>
+		<input type="text" name="PO" placeholder="PO" id="vn">
+		<input type="text" name="Line" placeholder="Line" id="vn">
+		<input type="checkbox" name="donuts" checked> I want this checked
+		<br>
+        <paper-checkbox name="cheese" value="yes" checked></paper-checkbox>
+      </form>
+    </iron-form>
+      <p></p>
+    </div>
+	
+	<iron-ajax 
+	id="one"
+	auto="" 
+	url="http://10.96.126.119:8080/vendorList.php?argument1=code&argument2=" 
+	handle-as="json" 
+	on-response="codeList"></iron-ajax>
+	<iron-ajax 
+	id="other"
+	auto="" 
+	url="http://10.96.126.119:8080/vendorList.php?argument1=name&argument2=" 
+	handle-as="json" 
+	on-response="nameList"></iron-ajax>
+	<!--last-response="{{vendorcodelist}}"></iron-ajax>-->
+
+	
+		<div class="card">
+      <div class="circle">A</div>
+      <h1>Upload Card</h1>
+		<d2l-file-uploader id="my-uploader" on-d2l-file-uploader-files-added="handleFileAdded"></d2l-file-uploader>
+	
+	  
+      <p>drag and drop a file or press Browse File button</p>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view1',
+	  ready: function() {
+	  this.$['one'].generateRequest();
+	  this.$['other'].generateRequest();
+    this.$['Skolda'].addEventListener('iron-form-presubmit', function(event) {
+      console.log(this); // it's the iron-form
+      console.log(event.target);  // also the iron-form
+      console.log(this.request);
+    })
+
+	},
+	codeList: function(e) {
+	if (e.detail.response!=null)
+	{
+	this.vendorcodelist = [];
+	this.vendorcodelist = e.detail.response;
+	}
+	},
+	nameList: function(e) {
+	if (e.detail.response!=null)
+	{
+	this.vendornamelist = [];
+	this.vendornamelist = e.detail.response;
+	}
+	},
+	  handleFileAdded: function(e) {
+	  //this.$["my-uploader"].
+	  //e.detail.files[0]
+	  //this.$.upload
+	  //this.data;
+	  let formData = new FormData();
+		//formData.append("image", e.detail.files[0]);
+		//formData=this.$['Skolda'].serialize();
+		for (i = 0; i < this.$['Skolda'].length; i++) 
+		{
+		if (this.$['Skolda'][i].value!="")
+		{
+			formData.append(this.$['Skolda'][i].name, this.$['Skolda'][i].value);
+		}
+		}
+		
+		formData.append("file", e.detail.files[0]);
+		this.$.upload.body = formData 
+		this.$.upload.generateRequest();
+		console.log(this.$.upload.lastResponse);
+	  },
+	  Foo: function(e){
+	  e.preventDefault();
+	  
+	  }
+	  ,
+	  Parse: function(data)
+	  {
+		//this.$['Skolda'].submit( function(e) {
+		//	  e.preventDefault();
+		//});
+		
+	  },
+	  Outcome: function(e) {
+	  
+	  if(e.detail.xhr.responseText.indexOf('uploaded successfully')!== -1)
+	  {
+		this.$["my-uploader"].feedback = "Uploaded Successfully";
+		this.$["my-uploader"].feedback.type = "";
+		this.$["my-uploader"].shadowRoot.children[1].style.borderLeftColor = '#32CD32';
+		console.log(e.detail.xhr.responseText.substr(e.detail.xhr.responseText.indexOf('[name] =')+10,e.detail.xhr.responseText.indexOf('[type] =')-e.detail.xhr.responseText.indexOf('[name] =')-10))
+		this.$["my-uploader"].feedback = e.detail.xhr.responseText.substr(e.detail.xhr.responseText.indexOf('[name] =')+10,e.detail.xhr.responseText.indexOf('[type] =')-e.detail.xhr.responseText.indexOf('[name] =')-10) + " Uploaded Successfully";
+		//#ffba59
+	  }
+	  }
+		
+    });
+
+
+     // var autocompleteSuggestions = document.querySelector('paper-autocomplete-suggestions');
+
+     // autocompleteSuggestions.source = states;
+
+      //autocompleteSuggestions.addEventListener('autocomplete-selected', function (event) {
+       // var paperToast = document.querySelector('paper-toast');
+        //var selected = event.detail.text;
+        //paperToast.text = 'Selected: ' + selected;
+       // paperToast.show();
+     //});
+	 
+	 
+    //    this.vendornamelist = [
+     //    {"text": "Alabama", "value": "AL"},
+      // {"text": "Alaska", "value": "AK"},
+      //  {"text": "American Samoa", "value": "AS"},
+      //  {"text": "Arizona", "value": "AZ"},
+       // {"text": "Arkansas", "value": "AR"}
+	//		];
+  
+  </script>
+</dom-module>
